@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>just for you</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Jost:wght@300;400;500&family=Mrs+Saint+Delafield&display=swap');
+
+  :root{
+    --ivory:#FBF4ED;
+    --blush:#F3D6CF;
+    --mauve:#C99A98;
+    --champagne:#D7B47C;
+    --ink:#463338;
+    --rose:#9C5B53;
+    --eyebrow:#A87E72;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--ivory);
+    color:var(--ink);
+    font-family:'Jost', sans-serif;
+    overflow-x:hidden;
+    position:relative;
+  }
+  ::selection{ background:var(--blush); }
+
+  /* ambient floating light motes */
+  .motes{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+  .mote{
+    position:absolute;
+    border-radius:9999px;
+    background:radial-gradient(circle, rgba(215,180,124,0.95) 0%, rgba(243,214,207,0.45) 60%, transparent 80%);
+    filter:blur(1px);
+    animation-name:float-up;
+    animation-timing-function:ease-in-out;
+    animation-iteration-count:infinite;
+  }
+  @keyframes float-up{
+    0%   { transform:translateY(0) translateX(0); opacity:0; }
+    12%  { opacity:var(--peak, 0.25); }
+    50%  { transform:translateY(-50vh) translateX(8px); }
+    88%  { opacity:var(--peak, 0.25); }
+    100% { transform:translateY(-105vh) translateX(-8px); opacity:0; }
+  }
+
+  .bg-glow{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:radial-gradient(ellipse 70% 40% at 50% 0%, rgba(243,214,207,0.45) 0%, rgba(251,244,237,0) 60%);
+  }
+
+  main{ position:relative; z-index:10; }
+
+  /* reveal-on-scroll */
+  .reveal{
+    opacity:0;
+    transform:translateY(26px);
+    filter:blur(6px);
+    transition:opacity 1.1s cubic-bezier(0.22,1,0.36,1),
+               transform 1.1s cubic-bezier(0.22,1,0.36,1),
+               filter 1.1s cubic-bezier(0.22,1,0.36,1);
+  }
+  .reveal.in-view{ opacity:1; transform:translateY(0); filter:blur(0); }
+
+  .underline-draw{
+    display:block;
+    margin-top:1.1rem;
+    height:1px;
+    background:var(--champagne);
+    width:0;
+    transition:width 1.3s cubic-bezier(0.22,1,0.36,1) 0.25s;
+  }
+  .underline-draw.in-view{ width:110px; }
+
+  /* hero */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:0 1.5rem;
+    text-align:center;
+  }
+  .hero::before{
+    content:'';
+    position:absolute; inset:0;
+    background:radial-gradient(ellipse 60% 50% at 50% 38%, rgba(244,201,160,0.40) 0%, rgba(251,244,237,0) 65%);
+  }
+  .eyebrow{
+    position:relative;
+    font-size:11px;
+    letter-spacing:0.45em;
+    text-transform:uppercase;
+    color:var(--eyebrow);
+    margin-bottom:1.5rem;
+  }
+  .hero h1{
+    position:relative;
+    font-family:'Cormorant Garamond', serif;
+    font-weight:400;
+    color:var(--ink);
+    font-size:clamp(2.5rem, 6vw, 4.25rem);
+    line-height:1.1;
+  }
+  .scroll-cue{
+    position:relative;
+    margin-top:4rem;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0.75rem;
+    opacity:0.7;
+  }
+  .scroll-line{ height:40px; width:1px; background:linear-gradient(to bottom, transparent, var(--mauve)); }
+  .scroll-label{ font-size:10px; letter-spacing:0.35em; text-transform:uppercase; color:var(--eyebrow); }
+
+  /* reveal sequence */
+  .reveal-block{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:78vh;
+    padding:0 1.5rem;
+  }
+  .reveal-text{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:400;
+    color:var(--ink);
+    font-size:clamp(1.5rem, 3.4vw, 2.4rem);
+    line-height:1.4;
+    max-width:42rem;
+    margin:0 auto;
+    text-align:center;
+  }
+  .emphasis-wrap{ display:flex; flex-direction:column; align-items:center; }
+  .reveal-emphasis{
+    font-family:'Mrs Saint Delafield', cursive;
+    color:var(--rose);
+    font-size:clamp(3rem, 9vw, 5rem);
+    line-height:1;
+    text-align:center;
+  }
+
+  /* letter */
+  .letter-section{ position:relative; padding:8rem 1.5rem 9rem; }
+  .letter-card{
+    max-width:42rem;
+    margin:0 auto;
+    position:relative;
+    border-radius:2px;
+    border:1px solid rgba(215,180,124,0.4);
+    background:rgba(255,252,248,0.55);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    box-shadow:0 30px 60px -25px rgba(70,51,56,0.25);
+    padding:3.5rem 1.75rem;
+  }
+  @media (min-width:640px){ .letter-card{ padding:4rem 3.5rem; } }
+  @media (min-width:768px){ .letter-card{ padding:5rem 4rem; } }
+
+  .ornament{ display:flex; align-items:center; justify-content:center; gap:0.75rem; }
+  .ornament.flip{ margin-top:3rem; }
+  .ornament-line{ height:1px; width:48px; background:var(--champagne); opacity:0.6; }
+  .ornament-dot{ height:6px; width:6px; transform:rotate(45deg); background:var(--champagne); }
+
+  .letter-body{
+    margin-top:2.5rem;
+    font-family:'Cormorant Garamond', serif;
+    font-size:1.2rem;
+    line-height:1.85;
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    gap:1.4rem;
+  }
+  .letter-body p.final{ padding-top:0.5rem; }
+
+  /* closing */
+  .closing{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    min-height:65vh;
+    padding:0 1.5rem 8rem;
+    text-align:center;
+  }
+  .closing-line1{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:400;
+    color:var(--ink);
+    font-size:clamp(1.5rem, 3.4vw, 2.1rem);
+  }
+  .closing-line2{
+    font-family:'Mrs Saint Delafield', cursive;
+    color:var(--rose);
+    font-size:clamp(2.2rem, 5vw, 3rem);
+    margin-top:0.25rem;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .mote{ animation:none !important; opacity:0.15 !important; }
+    *{ transition-duration:1ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="motes" id="motes"></div>
+<div class="bg-glow"></div>
+
+<main>
+
+  <section class="hero">
+    <p class="eyebrow">a little something</p>
+    <h1>just for you</h1>
+    <div class="scroll-cue">
+      <span class="scroll-line"></span>
+      <span class="scroll-label">scroll</span>
+    </div>
+  </section>
+
+  <section>
+    <div class="reveal-block">
+      <p class="reveal-text reveal">Hey bae 👋</p>
+    </div>
+    <div class="reveal-block">
+      <p class="reveal-text reveal">I was thinking today about ideas, ambition, and all the ways I could build something meaningful from the things I already carry in my heart and mind&hellip; and then it came to me. 💡</p>
+    </div>
+    <div class="reveal-block">
+      <p class="reveal-text reveal">Why not begin with the one thing I&rsquo;ve always felt most deeply and understood most clearly?</p>
+    </div>
+    <div class="reveal-block">
+      <div class="emphasis-wrap reveal">
+        <p class="reveal-emphasis">My love for you.</p>
+        <span class="underline-draw"></span>
+      </div>
+    </div>
+    <div class="reveal-block">
+      <p class="reveal-text reveal">So, like any true entrepreneur, the first thing I did was build a website to share and showcase that passion. The concept is simple, the intention is sincere, and the audience is wonderfully exclusive.</p>
+    </div>
+    <div class="reveal-block">
+      <p class="reveal-text reveal">So simple, in fact, that it can be said in the form of a love letter.</p>
+    </div>
+  </section>
+
+  <section class="letter-section">
+    <div class="reveal">
+      <div class="letter-card">
+        <div class="ornament">
+          <span class="ornament-line"></span>
+          <span class="ornament-dot"></span>
+          <span class="ornament-line"></span>
+        </div>
+        <div class="letter-body">
+          <p>Since the beginning, I knew you were different. There was something about you that my soul seemed to recognize before my mind could even make sense of it. I can&rsquo;t fully explain the feeling, only that I was drawn to you in a way that felt gentle, natural, and deeply certain.</p>
+          <p>It was as if some quiet part of me already knew that with you, I would be in good hands. That with you, my heart would find softness. That with you, parts of my soul I didn&rsquo;t even realize were tired would begin to heal.</p>
+          <p>The more I came to know you, the more that feeling only grew. You never felt temporary. You felt important. Safe. Rare. Like the kind of person who changes not just someone&rsquo;s days, but the way they experience love altogether.</p>
+          <p>You have a way of bringing peace into my life that words can barely hold. You make things feel lighter, warmer, more meaningful. And in loving you, I&rsquo;ve realized that sometimes the greatest blessing is simply finding someone whose presence feels like both comfort and wonder at the same time.</p>
+          <p>That is what you have been to me. Comfort and wonder. Peace and beauty. A love that feels restorative. A person who makes my heart feel seen, held, and understood.</p>
+          <p class="final">So if this is my love letter to you, let it begin with the truth I felt from the start:<br />
+          my soul knew there was something special about you before I ever knew how to say it.<br />
+          And every day since has only proven it right.</p>
+        </div>
+        <div class="ornament flip">
+          <span class="ornament-line"></span>
+          <span class="ornament-dot"></span>
+          <span class="ornament-line"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <div class="reveal">
+      <p class="closing-line1">Every love letter ends somewhere.</p>
+      <p class="closing-line2">Ours never really does.</p>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // ambient floating motes
+  const motesContainer = document.getElementById('motes');
+  const moteCount = 16;
+  for (let i = 0; i < moteCount; i++) {
+    const el = document.createElement('span');
+    el.className = 'mote';
+    const left = Math.random() * 100;
+    const size = 3 + Math.random() * 7;
+    const duration = 16 + Math.random() * 14;
+    const delay = Math.random() * 12;
+    const peak = 0.18 + Math.random() * 0.22;
+    el.style.left = left + '%';
+    el.style.bottom = '-6%';
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    el.style.setProperty('--peak', peak);
+    el.style.animationDuration = duration + 's';
+    el.style.animationDelay = delay + 's';
+    motesContainer.appendChild(el);
+  }
+
+  // scroll reveals
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.35 });
+  document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+
+  // gold underline draw-in
+  const underlineObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        underlineObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.6 });
+  document.querySelectorAll('.underline-draw').forEach((el) => underlineObserver.observe(el));
+</script>
+
+</body>
+</html>
